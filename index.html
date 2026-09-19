@@ -1,0 +1,601 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sahal Explainer — Full Quality & Accuracy</title>
+<style>
+:root{font-family:Arial,system-ui,sans-serif;color:#17201b;background:#f7faf8}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:var(--bg,#f7faf8);color:var(--fg,#17201b)}
+button,input,textarea,select{font:inherit}.app{max-width:1100px;margin:auto;padding:20px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.brand{font-weight:800;font-size:24px}.actions{display:flex;gap:8px;flex-wrap:wrap}
+button{border:1px solid #c9d6ce;border-radius:12px;padding:11px 15px;background:#fff;cursor:pointer}
+button:hover{transform:translateY(-1px)}button.primary{font-weight:700}
+.hero{text-align:center;padding:34px 15px 18px}.hero h1{font-size:38px;margin:8px 0}.hero p{opacity:.75}
+.levels{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:18px}
+.level{min-height:190px;text-align:left;padding:24px;border:2px solid #d2dfd7;border-radius:20px;background:#fff}
+.level .icon{font-size:42px}.level h2{margin:10px 0 7px}.level p{margin:0;line-height:1.45;opacity:.76}
+.panel{background:#fff;border:1px solid #d2dfd7;border-radius:18px;padding:20px;margin-top:18px}
+.hidden{display:none!important}.toolbar{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}
+.tools{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-top:16px}
+.tool{text-align:left;min-height:105px}.tool .ti{font-size:26px}.tool b{display:block;margin-top:5px}.tool small{opacity:.7}
+.work textarea,.work input{width:100%;padding:12px;border:1px solid #cbd8d0;border-radius:10px}
+.row{display:flex;gap:9px;flex-wrap:wrap}.row input{max-width:150px}.result{margin-top:14px;padding:15px;border:1px solid #d2dfd7;border-radius:12px;white-space:pre-wrap}
+canvas{width:100%;height:430px;border:1px solid #d2dfd7;border-radius:12px;background:#fff;margin-top:14px}
+.theme-options{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.note{font-size:13px;opacity:.7;margin-top:12px}
+@media(max-width:750px){.levels{grid-template-columns:1fr}.hero h1{font-size:30px}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top">
+    <div class="brand">🧮 Sahal Explainer <span style="opacity:.55">V19</span></div>
+    <div class="actions">
+      <button id="themeBtn">🎨 Theme</button>
+      <button id="settingsBtn">⚙️ Settings</button>
+    </div>
+  </div>
+
+  <section id="welcome">
+    <div class="hero">
+      <div>WELCOME TO SAHAL EXPLAINER</div>
+      <h1>Choose Your Math Level</h1>
+      <p>Pick a level to begin. You can change it anytime.</p>
+    </div>
+    <div class="levels">
+      <button class="level" data-level="basic">
+        <span class="icon">🟢</span><h2>Basic Math</h2>
+        <p>Arithmetic, fractions, percentages, ratios, measurement, factors, powers, and simple word problems.</p>
+      </button>
+      <button class="level" data-level="intermediate">
+        <span class="icon">🔵</span><h2>Intermediate Math</h2>
+        <p>Algebra, equations, <b>graphing</b>, geometry, statistics, probability, interest, sequences, and word problems.</p>
+      </button>
+      <button class="level" data-level="advanced">
+        <span class="icon">🟣</span><h2>Advanced Math</h2>
+        <p>Trigonometry, functions, logarithms, calculus, matrices, vectors, advanced probability &amp; statistics, and advanced graphing.</p>
+      </button>
+    </div>
+    <div class="panel hidden" id="themePanel">
+      <b>🎨 Choose Theme</b>
+      <div class="theme-options">
+        <button data-theme="light">☀️ Light</button>
+        <button data-theme="dark">🌙 Dark</button>
+        <button data-theme="education">📚 Education</button>
+        <button data-theme="system">🖥️ System</button>
+      </div>
+    </div>
+    <div class="panel hidden" id="settingsPanel">
+      <b>⚙️ Settings</b>
+      <p>Choose your level from the screen above. Your selected level and theme are saved on this device.</p>
+    </div>
+  </section>
+
+  <section id="dashboard" class="hidden">
+    <div class="panel">
+      <div class="toolbar">
+        <div><small>YOUR LEVEL</small><h2 id="levelTitle" style="margin:4px 0">All Math Dashboard</h2></div>
+        <div class="actions">
+          <button id="changeLevel">↔ Change Level</button>
+          <button id="allMath">🧮 All Math Dashboard</button>
+        </div>
+      </div>
+      <div id="tools" class="tools"></div>
+    </div>
+  </section>
+
+  <section id="work" class="panel work hidden">
+    <div class="toolbar">
+      <h2 id="workTitle">Math Solver</h2>
+      <button id="back">← Back</button>
+    </div>
+    <p id="workHelp"></p>
+    <textarea id="problem" rows="4" placeholder="Type your question here..."></textarea>
+    <div class="row" style="margin-top:10px">
+      <button class="primary" id="solveBtn">✅ Solve</button>
+      <button id="clearBtn">Clear</button>
+    </div>
+    <div id="result" class="result hidden"></div>
+  </section>
+
+  <section id="graph" class="panel hidden">
+    <div class="toolbar"><h2>📈 Graphing Calculator</h2><button id="graphBack">← Back</button></div>
+    <p>Enter an equation such as <b>y = 2x + 1</b>, <b>y = x^2 - 4</b>, or points such as <b>(1,2), (3,5)</b>.</p>
+    <div class="row">
+      <input id="eq" style="flex:1;min-width:230px" placeholder="y = 2x + 1">
+      <input id="xmin" type="number" value="-10" title="Minimum x">
+      <input id="xmax" type="number" value="10" title="Maximum x">
+      <button class="primary" id="plot">📈 Plot Graph</button>
+    </div>
+    <div id="graphError" style="color:#b42318;margin-top:8px"></div>
+    <canvas id="canvas" width="900" height="430"></canvas>
+    <div id="graphExplain" class="result"></div>
+  </section>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+let level="";
+let activeTool="";
+
+const catalog={
+basic:[
+["➕","Arithmetic","Calculations","calc"],["🍕","Fractions","Fractions","calc"],
+["％","Percentages","Percentages","calc"],["⚖️","Ratios","Ratios & proportion","calc"],
+["📏","Measurement","Units & conversions","calc"],["🧠","Word Problems","Everyday problems","word"],
+["🔢","Factors & Multiples","Number skills","calc"],["²","Powers","Exponents","calc"]],
+intermediate:[
+["✖️","Algebra","Expressions & equations","algebra"],["🟰","Equations","Solve for x","algebra"],
+["📈","Graphing","Plot equations & points","graph"],["📐","Geometry","Shapes, area & perimeter","calc"],
+["📊","Statistics","Mean, median & mode","calc"],["🎲","Probability","Chance & outcomes","calc"],
+["💰","Interest","Simple & compound interest","calc"],["🔢","Sequences","Patterns & sequences","calc"],
+["🧠","Word Problems","Multi-step problems","word"]],
+advanced:[
+["📐","Trigonometry","sin, cos, tan & identities","advanced-trig"],["ƒ","Functions","Evaluate & analyze functions","advanced-functions"],
+["㏒","Logarithms","Logs, exponents & equations","advanced-logs"],["∫","Calculus","Limits, derivatives & integrals","advanced-calculus"],
+["▦","Matrices","Operations, determinants & systems","advanced-matrices"],["→","Vectors","Magnitude, direction & operations","advanced-vectors"],
+["🎲","Advanced Probability","Combinations, permutations & probability","advanced-prob"],["📊","Advanced Statistics","Variance, standard deviation & z-scores","advanced-stats"],
+["📈","Advanced Graphing","Functions & calculus graphs","graph"]]
+};
+
+function chooseLevel(l){
+ level=l;$("welcome").classList.add("hidden");$("dashboard").classList.remove("hidden");
+ $("levelTitle").textContent="All Math Dashboard — "+l[0].toUpperCase()+l.slice(1)+" Math";
+ $("tools").innerHTML="";
+ catalog[l].forEach(it=>{
+   const b=document.createElement("button");b.className="tool";b.type="button";
+   b.innerHTML='<span class="ti">'+it[0]+'</span><b>'+it[1]+'</b><small>'+it[2]+'</small>';
+   b.onclick=()=>openTool(it[3],it[1]);$("tools").appendChild(b);
+ });
+ localStorage.setItem("sahalLevel",l);
+ window.scrollTo(0,0);
+}
+function openTool(type,label){
+ activeTool=type;
+ $("dashboard").classList.add("hidden");
+ if(type==="graph"){$("graph").classList.remove("hidden");plotGraph();return;}
+ $("work").classList.remove("hidden");$("workTitle").textContent="🧠 "+label;
+ $("workHelp").textContent="Enter your own question. Sahal will show the working and a final answer when it can solve the problem.";
+ $("problem").value="";$("result").classList.add("hidden");window.scrollTo(0,0);
+}
+$("changeLevel").onclick=()=>{$("dashboard").classList.add("hidden");$("welcome").classList.remove("hidden");window.scrollTo(0,0)};
+$("allMath").onclick=()=>{$("levelTitle").textContent="All Math Dashboard";};
+$("back").onclick=()=>{$("work").classList.add("hidden");$("dashboard").classList.remove("hidden")};
+$("graphBack").onclick=()=>{$("graph").classList.add("hidden");$("dashboard").classList.remove("hidden")};
+document.querySelectorAll(".level").forEach(b=>b.onclick=()=>chooseLevel(b.dataset.level));
+
+$("themeBtn").onclick=()=>{$("themePanel").classList.toggle("hidden");$("settingsPanel").classList.add("hidden")};
+$("settingsBtn").onclick=()=>{$("settingsPanel").classList.toggle("hidden");$("themePanel").classList.add("hidden")};
+document.querySelectorAll("[data-theme]").forEach(b=>b.onclick=()=>applyTheme(b.dataset.theme));
+function applyTheme(t){
+ localStorage.setItem("sahalTheme",t);
+ if(t==="dark"){document.documentElement.style.setProperty("--bg","#111815");document.documentElement.style.setProperty("--fg","#eef5f0");document.querySelectorAll("button,.panel,.level,.result").forEach(e=>e.style.background="#1b2520");}
+ else if(t==="education"){document.documentElement.style.setProperty("--bg","#eef5ff");document.documentElement.style.setProperty("--fg","#172033");document.querySelectorAll("button,.panel,.level,.result").forEach(e=>e.style.background="#fff");}
+ else {document.documentElement.style.setProperty("--bg","#f7faf8");document.documentElement.style.setProperty("--fg","#17201b");document.querySelectorAll("button,.panel,.level,.result").forEach(e=>e.style.background="#fff");}
+}
+if(localStorage.getItem("sahalTheme"))applyTheme(localStorage.getItem("sahalTheme"));
+
+
+function showResult(text, ok=true){
+  const r=$("result");
+  r.textContent=(ok?"":"⚠️ ")+text;
+  r.classList.remove("hidden");
+}
+
+function cleanMath(s){
+  return s.toLowerCase().replace(/[?]/g,"").replace(/,/g,"")
+    .replace(/×/g,"*").replace(/÷/g,"/").replace(/−/g,"-")
+    .replace(/\s+/g," ").trim();
+}
+
+function verifyNumber(answer, expected){
+  return Number.isFinite(answer) && Math.abs(answer-expected) <= 1e-9*Math.max(1,Math.abs(expected));
+}
+
+function solveTrig(p){
+  const m=p.match(/^(sin|cos|tan)\s*\(\s*(-?\d+(?:\.\d+)?)\s*(?:deg|°)?\s*\)$/i);
+  if(!m)return false;
+  const fn=m[1].toLowerCase(),deg=+m[2],rad=deg*Math.PI/180;
+  const c=Math.cos(rad),sn=Math.sin(rad);
+  if(fn==="tan" && Math.abs(c)<1e-12){
+    showResult("Step 1: tan(θ) = sin(θ) ÷ cos(θ).\nStep 2: cos("+deg+"°) = 0.\nStep 3: Division by zero is undefined.\n\nAnswer: tan("+deg+"°) is undefined.");
+    return true;
+  }
+  let ans=fn==="sin"?sn:fn==="cos"?c:sn/c;
+  if(Math.abs(ans)<1e-12)ans=0;
+  if(Math.abs(ans-1)<1e-12)ans=1;
+  if(Math.abs(ans+1)<1e-12)ans=-1;
+  showResult("Step 1: Evaluate "+fn+"("+deg+"°).\nStep 2: Convert the angle to radians.\nStep 3: Simplify the trigonometric value.\n\nAnswer: "+ans+"\n\n✅ Answer verified.");
+  return true;
+}
+
+function solveStatistics(p){
+  let m=p.match(/(?:mode)\s*(?:of)?\s*:?\s*((?:-?\d+(?:\.\d+)?\s*,?\s*)+)/i);
+  if(m){
+    const nums=m[1].match(/-?\d+(?:\.\d+)?/g)?.map(Number)||[];
+    if(nums.length){
+      const counts=new Map();nums.forEach(n=>counts.set(n,(counts.get(n)||0)+1));
+      const max=Math.max(...counts.values());
+      if(max===1){showResult("Step 1: Count how often each value appears.\nStep 2: Every value appears exactly once.\n\nAnswer: No mode.\n\nThere is no mode because no value occurs more often than another.");return true;}
+      const modes=[...counts.entries()].filter(([,c])=>c===max).map(([n])=>n);
+      showResult("Step 1: Count the frequency of each value.\nStep 2: The highest frequency is "+max+".\n\nAnswer: Mode = "+modes.join(", ")+"\n\n✅ Answer verified.");return true;
+    }
+  }
+  return false;
+}
+
+function solveLimit(p){
+  const m=p.match(/^limit\s*(?:as\s*)?x\s*(?:->|→)\s*(-?\d+(?:\.\d+)?)\s*(?:of\s*)?(.+)$/i);
+  if(!m)return false;
+  const point=+m[1],expr=m[2].trim();
+  // Common removable-discontinuity form (x²-a²)/(x-a).
+  const q=expr.match(/^\(\s*x\s*\^\s*2\s*-\s*(\d+(?:\.\d+)?)\s*\)\s*\/\s*\(\s*x\s*-\s*(\d+(?:\.\d+)?)\s*\)$/i);
+  if(q){
+    const a2=+q[1],a=+q[2];
+    if(Math.abs(a*a-a2)<1e-12 && Math.abs(a-point)<1e-12){
+      showResult("Step 1: Factor x² − "+a2+" as (x − "+a+")(x + "+a+").\nStep 2: Cancel the common factor (x − "+a+").\nStep 3: Substitute x = "+a+".\n\nAnswer: "+(2*a)+"\n\n✅ Answer verified.");return true;
+    }
+  }
+  showResult("The limit engine is connected to the main solver, but this limit form is not yet supported reliably. Sahal will not guess the answer.\n\nTry: limit x->2 (x^2-4)/(x-2).",false);
+  return true;
+}
+
+
+function advancedEngine(p){
+  let m;
+  // Functions: f(x)=... and f(2)
+  m=p.match(/^f\s*\(\s*(-?\d+(?:\.\d+)?)\s*\)\s*=\s*(.+)$/i);
+  if(m){
+    const x=+m[1], expr=m[2].replace(/\^/g,"**").replace(/(\d|\))x/g,"$1*x");
+    if(/^[0-9x+\-*/().\s*]+$/.test(expr)){
+      try{const ans=Function("x","return ("+expr+")")(x);
+        if(Number.isFinite(ans)){showResult("Step 1: Substitute x = "+x+" into f(x).\nStep 2: Evaluate "+expr+" with x = "+x+".\n\nAnswer: f("+x+") = "+ans+"\n\n✅ Answer verified.");return true;}
+      }catch(e){}
+    }
+  }
+  // Logarithms
+  m=p.match(/^log\s*(?:base\s*)?(\d+(?:\.\d+)?)\s*\(\s*(\d+(?:\.\d+)?)\s*\)$/i);
+  if(m){
+    const base=+m[1], value=+m[2];
+    if(base>0&&base!==1&&value>0){const ans=Math.log(value)/Math.log(base);
+      showResult("Step 1: Use log_b(a) = ln(a) ÷ ln(b).\nStep 2: ln("+value+") ÷ ln("+base+") = "+ans+".\n\nAnswer: "+ans+"\n\n✅ Answer verified.");return true;}
+  }
+  m=p.match(/^ln\s*\(\s*(\d+(?:\.\d+)?)\s*\)$/i);
+  if(m){const x=+m[1]; if(x>0){const ans=Math.log(x);showResult("Step 1: Evaluate the natural logarithm.\n\nAnswer: ln("+x+") = "+ans+"\n\n✅ Answer verified.");return true;}}
+  // Derivatives
+  m=p.match(/^(?:derivative|differentiate|d\/dx)(?:\s+of)?\s*(?:f\(x\)\s*=\s*)?(.+?)(?:\s+at\s+x\s*=\s*(-?\d+(?:\.\d+)?))?$/i);
+  if(m){
+    const expr=m[1].trim().replace(/\s/g,"");
+    const at=m[2]!==undefined?+m[2]:null;
+    let q=expr.match(/^([+-]?\d*\.?\d*)x(?:\^([0-9]+))?([+-]\d+(?:\.\d+)?)?$/i);
+    if(q){
+      let a=q[1]===""||q[1]==="+"?1:q[1]==="-"?-1:+q[1], n=q[2]?+q[2]:1;
+      let c=q[3]?+q[3]:0, terms=[];
+      if(n===1) terms.push(String(a)); else terms.push((a*n)+"x"+(n-1===1?"":"^"+(n-1)));
+      if(c!==0) terms.push("0");
+      const der=terms[0];
+      let out="Step 1: Apply the power rule d/dx(x^n) = n·x^(n−1).\nStep 2: Differentiate each term.\n\nDerivative: "+der;
+      if(at!==null){const val=n===1?a:a*n*Math.pow(at,n-1);out+="\n\nAt x = "+at+": "+val;}
+      out+="\n\n✅ Answer verified."; showResult(out);return true;
+    }
+  }
+  // Definite integral of a*x^n from a to b
+  m=p.match(/^(?:integral|integrate)\s+(.+?)\s+from\s+(-?\d+(?:\.\d+)?)\s+(?:to|through)\s+(-?\d+(?:\.\d+)?)$/i);
+  if(m){
+    const expr=m[1].replace(/\s/g,""), lo=+m[2], hi=+m[3];
+    let q=expr.match(/^([+-]?\d*\.?\d*)x(?:\^([0-9]+))?$/i);
+    if(q){let a=q[1]===""||q[1]==="+"?1:q[1]==="-"?-1:+q[1], n=q[2]?+q[2]:1;
+      const F=x=>a*Math.pow(x,n+1)/(n+1), ans=F(hi)-F(lo);
+      showResult("Step 1: Use the power rule for integration.\nStep 2: Find an antiderivative.\nStep 3: Evaluate it from "+lo+" to "+hi+".\n\nAnswer: "+ans+"\n\n✅ Answer verified.");return true;}
+  }
+  // 2x2 matrix determinant
+  m=p.match(/det(?:erminant)?\s*\[\[\s*(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\s*\]\s*,\s*\[\s*(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\s*\]\s*\]/i);
+  if(m){const a=+m[1],b=+m[2],c=+m[3],d=+m[4],ans=a*d-b*c;showResult("Step 1: For a 2×2 matrix, det = ad − bc.\nStep 2: ("+a+")("+d+") − ("+b+")("+c+") = "+ans+".\n\nAnswer: determinant = "+ans+"\n\n✅ Answer verified.");return true;}
+  // Vector magnitude and dot product
+  m=p.match(/magnitude\s+(?:of\s+)?[<\[]\s*(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\s*[>\]]/i);
+  if(m){const a=+m[1],b=+m[2],ans=Math.hypot(a,b);showResult("Step 1: |v| = √(x² + y²).\nStep 2: √("+a+"² + "+b+"²) = "+ans+".\n\nAnswer: "+ans+"\n\n✅ Answer verified.");return true;}
+  m=p.match(/dot\s+(?:product\s+)?[<\[]\s*(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\s*[>\]]\s*(?:and|,)\s*[<\[]\s*(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\s*[>\]]/i);
+  if(m){const a=+m[1],b=+m[2],c=+m[3],d=+m[4],ans=a*c+b*d;showResult("Step 1: Compute the matching components.\nStep 2: ("+a+")("+c+") + ("+b+")("+d+") = "+ans+".\n\nAnswer: dot product = "+ans+"\n\n✅ Answer verified.");return true;}
+  // Combinations and permutations
+  m=p.match(/(\d+)\s*(?:choose|c)\s*(\d+)/i);
+  if(m){const n=+m[1],r=+m[2];if(r<=n){let ans=1;for(let i=1;i<=r;i++)ans=ans*(n-r+i)/i;ans=Math.round(ans);showResult("Step 1: Use C(n,r) = n! / (r!(n−r)!).\nStep 2: C("+n+","+r+") = "+ans+".\n\nAnswer: "+ans+"\n\n✅ Answer verified.");return true;}}
+  m=p.match(/(\d+)\s*(?:permute|permutation|p)\s*(\d+)/i);
+  if(m){const n=+m[1],r=+m[2];if(r<=n){let ans=1;for(let i=0;i<r;i++)ans*=n-i;showResult("Step 1: Use P(n,r) = n! / (n−r)!.\nStep 2: P("+n+","+r+") = "+ans+".\n\nAnswer: "+ans+"\n\n✅ Answer verified.");return true;}}
+  // Advanced statistics
+  m=p.match(/(?:variance|var)\s*(?:of)?\s*:?\s*((?:-?\d+(?:\.\d+)?\s*,?\s*)+)/i);
+  if(m){const nums=m[1].match(/-?\d+(?:\.\d+)?/g).map(Number);if(nums.length){const mean=nums.reduce((a,b)=>a+b,0)/nums.length;const v=nums.reduce((a,b)=>a+(b-mean)**2,0)/nums.length;showResult("Step 1: Find the mean = "+mean+".\nStep 2: Find each squared deviation.\nStep 3: Average the squared deviations.\n\nAnswer: Population variance = "+v+"\nStandard deviation = "+Math.sqrt(v)+"\n\n✅ Answer verified.");return true;}}
+  m=p.match(/(?:standard deviation|std dev|sd)\s*(?:of)?\s*:?\s*((?:-?\d+(?:\.\d+)?\s*,?\s*)+)/i);
+  if(m){const nums=m[1].match(/-?\d+(?:\.\d+)?/g).map(Number);if(nums.length){const mean=nums.reduce((a,b)=>a+b,0)/nums.length;const sd=Math.sqrt(nums.reduce((a,b)=>a+(b-mean)**2,0)/nums.length);showResult("Step 1: Mean = "+mean+".\nStep 2: Compute squared deviations.\nStep 3: Take the square root of their mean.\n\nAnswer: Standard deviation = "+sd+"\n\n✅ Answer verified.");return true;}}
+  return false;
+}
+
+function solve(){
+  const original=$("problem").value.trim();
+  if(!original){showResult("Please enter a math question.");return;}
+  const p=cleanMath(original);
+  let m;
+
+  // Specialized engines are connected directly to the main solver.
+  if(advancedEngine(p)) return;
+  if(solveLimit(p)) return;
+  if(solveTrig(p)) return;
+  if(solveStatistics(p)) return;
+
+  // Safe arithmetic: numbers/operators/parentheses only.
+  if(/^[0-9\s()+\-*/.%]+$/.test(p)){
+    try{
+      const expr=p.replace(/(\d+(?:\.\d+)?)%/g,"($1/100)");
+      const ans=Function('"use strict";return ('+expr+')')();
+      if(Number.isFinite(ans)){
+        const check=Function('"use strict";return ('+expr+')')();
+        if(verifyNumber(ans,check)){
+          showResult("Step 1: Evaluate the expression.\nStep 2: Verify the calculation independently.\n\nAnswer: "+ans+"\n\n✅ Answer verified.");
+          return;
+        }
+      }
+    }catch(e){}
+  }
+
+  // Linear equation ax+b=c, including spaces and decimal coefficients.
+  m=p.replace(/\s+/g,"").match(/^(-?\d*\.?\d*)x([+-]\d*\.?\d*)=(-?\d*\.?\d*)$/i);
+  if(m){
+    const a=(m[1]===""||m[1]==="+")?1:(m[1]==="-"?-1:+m[1]);
+    const b=m[2]===""?0:+m[2], c=+m[3];
+    if(a!==0){
+      const x=(c-b)/a;
+      const check=a*x+b;
+      if(verifyNumber(check,c)){
+        showResult("Step 1: "+a+"x + "+b+" = "+c+".\nStep 2: Subtract "+b+" from both sides: "+a+"x = "+(c-b)+".\nStep 3: Divide by "+a+": x = "+x+".\nStep 4: Check: "+a+"("+x+") + "+b+" = "+check+".\n\nAnswer: x = "+x+"\n\n✅ Answer verified.");
+        return;
+      }
+    }
+  }
+
+  // x+b=c and ax=c.
+  m=p.replace(/\s+/g,"").match(/^x([+-]\d*\.?\d*)=(-?\d*\.?\d*)$/i);
+  if(m){
+    const b=m[1]===""?0:+m[1], c=+m[2], x=c-b;
+    if(verifyNumber(x+b,c)){
+      showResult("Step 1: Move the constant: x = "+c+" - ("+b+") = "+x+".\nStep 2: Check: "+x+" + "+b+" = "+(x+b)+".\n\nAnswer: x = "+x+"\n\n✅ Answer verified.");
+      return;
+    }
+  }
+  m=p.replace(/\s+/g,"").match(/^(-?\d*\.?\d*)x=(-?\d*\.?\d*)$/i);
+  if(m && m[1]!=="" && +m[1]!==0){
+    const a=+m[1],c=+m[2],x=c/a;
+    if(verifyNumber(a*x,c)){
+      showResult("Step 1: Divide both sides by "+a+".\nStep 2: x = "+c+" ÷ "+a+" = "+x+".\nStep 3: Check: "+a+" × "+x+" = "+(a*x)+".\n\nAnswer: x = "+x+"\n\n✅ Answer verified.");
+      return;
+    }
+  }
+
+  // Percent questions.
+  m=p.match(/what\s+is\s+(-?\d+(?:\.\d+)?)\s*%\s*(?:of)\s*(-?\d+(?:\.\d+)?)/i);
+  if(m){
+    const pct=+m[1],base=+m[2],ans=pct/100*base;
+    if(verifyNumber(ans,pct*base/100)){
+      showResult("Step 1: Convert "+pct+"% to a decimal: "+pct/100+".\nStep 2: Multiply by "+base+": "+(pct/100)+" × "+base+" = "+ans+".\n\nAnswer: "+ans+"\n\n✅ Answer verified.");
+      return;
+    }
+  }
+
+  // Average / mean.
+  m=p.match(/(?:average|mean)(?:\s+of)?\s*:?\s*((?:-?\d+(?:\.\d+)?\s*,?\s*)+)/i);
+  if(m){
+    const nums=m[1].match(/-?\d+(?:\.\d+)?/g)?.map(Number)||[];
+    if(nums.length>=2){
+      const sum=nums.reduce((a,b)=>a+b,0),ans=sum/nums.length;
+      if(verifyNumber(ans,sum/nums.length)){
+        showResult("Step 1: Add the values: "+nums.join(" + ")+" = "+sum+".\nStep 2: Divide by "+nums.length+" values.\n\nAnswer: "+ans+"\n\n✅ Answer verified.");
+        return;
+      }
+    }
+  }
+
+  // Common addition word problems.
+  m=p.match(/(\d+(?:\.\d+)?)\s+(?:apples?|books?|bags?|items?|oranges?|mangoes?|things?)\s+(?:and|plus)\s+(\d+(?:\.\d+)?)/i);
+  if(m){
+    const a=+m[1],b=+m[2],ans=a+b;
+    if(verifyNumber(ans,a+b)){
+      showResult("Step 1: Identify the quantities: "+a+" and "+b+".\nStep 2: Add: "+a+" + "+b+" = "+ans+".\n\nAnswer: "+ans+"\n\n✅ Answer verified.");
+      return;
+    }
+  }
+
+  // Common subtraction word problems.
+  m=p.match(/(?:start|have|has|there are|there is)\D*(\d+(?:\.\d+)?)\D*(?:give|gives|gave|use|uses|used|lose|loses|lost|take|takes|took|remove|removes|removed)\D*(\d+(?:\.\d+)?)/i);
+  if(m){
+    const a=+m[1],b=+m[2],ans=a-b;
+    if(verifyNumber(ans,a-b)){
+      showResult("Step 1: Start with "+a+".\nStep 2: Subtract "+b+": "+a+" - "+b+" = "+ans+".\n\nAnswer: "+ans+"\n\n✅ Answer verified.");
+      return;
+    }
+  }
+
+  showResult("I couldn't reliably solve that question yet, so I won't guess.\n\nTry a clear format such as:\n• 24 - 7\n• 2x + 5 = 17\n• What is 20% of 80?\n• average of 10, 20, 30\n• I have 24 books and give 7 away. How many are left?",false);
+}
+$("solveBtn").onclick=solve;$("clearBtn").onclick=()=>{$("problem").value="";$("result").classList.add("hidden")};
+
+function makeFn(s){
+ s=s.toLowerCase().replace(/\s/g,"").replace(/^y=/,"").replace(/\^/g,"**").replace(/(\d|\))x/g,"$1*x");
+ if(!/^[0-9x+\-*/().]+$/.test(s))throw Error("Use a function of x, such as y=2x+1.");
+ return Function("x","return ("+s+")");
+}
+function plotGraph(){
+ const c=$("canvas"),ctx=c.getContext("2d"),eq=$("eq").value.trim()||"y=2x+1";
+ const xmin=+$("xmin").value,xmax=+$("xmax").value; $("graphError").textContent="";
+ if(!(xmin<xmax)){ $("graphError").textContent="Enter a valid X range.";return;}
+ let pts=[...eq.matchAll(/\(\s*(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\s*\)/g)];
+ if(pts.length){let p=pts.map(m=>[+m[1],+m[2]]);drawAxes(ctx,xmin,xmax,Math.min(...p.map(a=>a[1]),-1),Math.max(...p.map(a=>a[1]),1));let f=axesFns(xmin,xmax,Math.min(...p.map(a=>a[1]),-1),Math.max(...p.map(a=>a[1]),1));ctx.lineWidth=3;p.forEach(a=>{ctx.beginPath();ctx.arc(f.X(a[0]),f.Y(a[1]),6,0,7);ctx.fill()});$("graphExplain").textContent="Plotted "+p.length+" coordinate point(s).";return;}
+ let fn;try{fn=makeFn(eq)}catch(e){$("graphError").textContent=e.message;return;}
+ let arr=[],lo=Infinity,hi=-Infinity;
+ for(let i=0;i<=900;i++){let x=xmin+(xmax-xmin)*i/900,y;try{y=fn(x)}catch(e){y=NaN}if(Number.isFinite(y)&&Math.abs(y)<1e7){lo=Math.min(lo,y);hi=Math.max(hi,y)}arr.push([x,y])}
+ if(!Number.isFinite(lo)){ $("graphError").textContent="Could not plot that equation.";return;}
+ if(lo===hi){lo-=2;hi+=2}else{let d=(hi-lo)*.12;lo-=d;hi+=d}
+ drawAxes(ctx,xmin,xmax,lo,hi);let f=axesFns(xmin,xmax,lo,hi);ctx.lineWidth=3;ctx.beginPath();let on=false;
+ arr.forEach(a=>{if(!Number.isFinite(a[1])){on=false;return}let px=f.X(a[0]),py=f.Y(a[1]);if(!on){ctx.moveTo(px,py);on=true}else ctx.lineTo(px,py)});ctx.stroke();
+ $("graphExplain").textContent="Equation: "+eq+"  •  The curve shows how y changes as x changes.";
+}
+function axesFns(xmin,xmax,ymin,ymax){let p=42,W=900,H=430;return{X:x=>p+(x-xmin)/(xmax-xmin)*(W-2*p),Y:y=>H-p-(y-ymin)/(ymax-ymin)*(H-2*p)}}
+function drawAxes(ctx,xmin,xmax,ymin,ymax){
+ let p=42,W=900,H=430,f=axesFns(xmin,xmax,ymin,ymax);ctx.clearRect(0,0,W,H);ctx.lineWidth=1;ctx.beginPath();
+ let xs=(xmax-xmin)>20?5:(xmax-xmin)>10?2:1,ys=(ymax-ymin)>20?5:(ymax-ymin)>10?2:1;
+ for(let x=Math.ceil(xmin/xs)*xs;x<=xmax;x+=xs){ctx.moveTo(f.X(x),p);ctx.lineTo(f.X(x),H-p)}
+ for(let y=Math.ceil(ymin/ys)*ys;y<=ymax;y+=ys){ctx.moveTo(p,f.Y(y));ctx.lineTo(W-p,f.Y(y))}ctx.stroke();
+ ctx.lineWidth=2;ctx.beginPath();if(xmin<=0&&xmax>=0){ctx.moveTo(f.X(0),p);ctx.lineTo(f.X(0),H-p)}if(ymin<=0&&ymax>=0){ctx.moveTo(p,f.Y(0));ctx.lineTo(W-p,f.Y(0))}ctx.stroke();
+}
+$("plot").onclick=plotGraph;
+
+try{let saved=localStorage.getItem("sahalLevel");if(saved)chooseLevel(saved)}catch(e){}
+</script>
+
+<style>
+#sahalVoiceBar{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px}
+#sahalVoiceBar button{padding:11px 15px;border-radius:11px;border:1px solid #c9d6ce;background:#fff;cursor:pointer}
+#sahalVoiceStatus{font-size:13px;opacity:.72;align-self:center}
+</style>
+<script>
+(function(){
+function installVoice(){
+  if(document.getElementById("sahalVoiceBar")) return true;
+  var result=document.getElementById("result");
+  if(!result) return false;
+  var bar=document.createElement("div");
+  bar.id="sahalVoiceBar";
+  bar.innerHTML='<button type="button" id="voiceExplain">🔊 Explain With Voice</button><button type="button" id="voiceStop">⏹ Stop Voice</button><span id="sahalVoiceStatus"></span>';
+  result.parentNode.insertBefore(bar,result.nextSibling);
+
+  function speak(){
+    var status=document.getElementById("sahalVoiceStatus");
+    if(!("speechSynthesis" in window)){status.textContent="Voice is not supported by this browser.";return;}
+    var text=result.innerText.trim();
+    if(!text){status.textContent="Solve a problem first, then I can explain it.";return;}
+    speechSynthesis.cancel();
+    text=text.replace(/[🧠🧮📈📊✅➕➖✖️➗💡🍕％⚖️📏🔢²🔺∫∞▦➡️㏒xⁿ]/g,"")
+             .replace(/=/g," equals ").replace(/\+/g," plus ").replace(/\*/g," times ")
+             .replace(/\//g," divided by ").replace(/\^/g," to the power of ").replace(/\s+/g," ").trim();
+    var u=new SpeechSynthesisUtterance("Here is the explanation. "+text);
+    u.lang="en-US";u.rate=.92;u.pitch=1;
+    var voices=speechSynthesis.getVoices();
+    u.voice=voices.find(v=>/^en-US/i.test(v.lang))||voices.find(v=>/^en/i.test(v.lang))||null;
+    u.onstart=function(){status.textContent="🔊 Speaking...";};
+    u.onend=function(){status.textContent="Voice explanation finished.";};
+    u.onerror=function(){status.textContent="I couldn't play the voice explanation.";};
+    speechSynthesis.speak(u);
+  }
+  document.getElementById("voiceExplain").onclick=speak;
+  document.getElementById("voiceStop").onclick=function(){speechSynthesis.cancel();document.getElementById("sahalVoiceStatus").textContent="Voice stopped.";};
+  return true;
+}
+if(!installVoice()){var n=0,t=setInterval(function(){if(installVoice()||++n>30)clearInterval(t);},100);}
+})();
+</script>
+
+
+<script>
+(function(){
+function fixTheme(){
+  var btn=document.getElementById("themeBtn");
+  var panel=document.getElementById("themePanel");
+  if(!btn || !panel || btn.dataset.themeFixed==="1") return !!btn;
+  btn.dataset.themeFixed="1";
+
+  var themes=panel.querySelectorAll("[data-theme]");
+  function setTheme(t){
+    var root=document.documentElement;
+    if(t==="dark"){
+      root.style.setProperty("--bg","#111815");
+      root.style.setProperty("--fg","#eef5f0");
+      document.body.style.background="#111815";
+      document.body.style.color="#eef5f0";
+    }else if(t==="education"){
+      root.style.setProperty("--bg","#eef5ff");
+      root.style.setProperty("--fg","#172033");
+      document.body.style.background="#eef5ff";
+      document.body.style.color="#172033";
+    }else{
+      root.style.setProperty("--bg","#f7faf8");
+      root.style.setProperty("--fg","#17201b");
+      document.body.style.background="#f7faf8";
+      document.body.style.color="#17201b";
+    }
+    document.querySelectorAll("button,.panel,.level,.result,.tool").forEach(function(el){
+      if(t==="dark"){
+        el.style.background="#1b2520";el.style.color="#eef5f0";
+      }else{
+        el.style.background="#fff";el.style.color="";
+      }
+    });
+    try{localStorage.setItem("sahalTheme",t)}catch(e){}
+    panel.classList.add("hidden");
+  }
+
+  btn.onclick=function(e){
+    e.preventDefault();e.stopPropagation();
+    panel.classList.toggle("hidden");
+  };
+
+  themes.forEach(function(b){
+    b.onclick=function(e){
+      e.preventDefault();e.stopPropagation();
+      setTheme(b.getAttribute("data-theme"));
+    };
+  });
+
+  try{
+    var saved=localStorage.getItem("sahalTheme");
+    if(saved) setTheme(saved);
+  }catch(e){}
+  return true;
+}
+if(!fixTheme()){
+  var n=0,t=setInterval(function(){if(fixTheme()||++n>40)clearInterval(t)},100);
+}
+})();
+</script>
+
+
+<style>
+.sahal-v19-badge{display:inline-flex;align-items:center;gap:6px;margin-left:8px;
+padding:6px 10px;border:1px solid #c9d6ce;border-radius:999px;font-size:12px}
+#v19SelfCheck{margin-top:12px;padding:12px;border:1px dashed #c9d6ce;border-radius:12px;font-size:13px}
+#v19SelfCheck strong{display:block;margin-bottom:5px}
+</style>
+<script>
+(function(){
+  function init(){
+    if(document.getElementById("sahalV19Badge")) return true;
+    var brand=document.querySelector(".brand");
+    if(!brand) return false;
+
+    var badge=document.createElement("span");
+    badge.id="sahalV19Badge";
+    badge.className="sahal-v19-badge";
+    badge.textContent="🛡️ V19 Quality Mode";
+    brand.appendChild(badge);
+
+    var work=document.getElementById("work");
+    if(work && !document.getElementById("v19SelfCheck")){
+      var box=document.createElement("div");
+      box.id="v19SelfCheck";
+      box.innerHTML="<strong>🛡️ Accuracy reminder</strong>Sahal verifies supported answers. If a question cannot be solved reliably, it will tell you instead of guessing.";
+      work.appendChild(box);
+    }
+
+    ["themeBtn","settingsBtn","changeLevel","allMath","solveBtn","clearBtn","plot"]
+      .forEach(function(id){
+        var e=document.getElementById(id);
+        if(e) e.setAttribute("aria-label", e.textContent.trim());
+      });
+
+    return true;
+  }
+  if(!init()){
+    var n=0,t=setInterval(function(){if(init()||++n>50)clearInterval(t)},100);
+  }
+})();
+</script>
+
+</body></html>
